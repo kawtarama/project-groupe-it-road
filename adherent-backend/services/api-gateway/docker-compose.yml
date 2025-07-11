@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "4000:4000"
+    env_file: ./services/auth-service/.env
+    depends_on:
+      - postgres
+
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "4001:4001"
+    env_file: ./services/user-service/.env
+    depends_on:
+      - postgres
+
+  document-service:
+    build: ./services/document-service
+    ports:
+      - "4002:4002"
+    env_file: ./services/document-service/.env
+    volumes:
+      - ./services/document-service/uploads:/app/uploads
+    depends_on:
+      - postgres
+
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "4003:4003"
+    env_file: ./services/api-gateway/.env
+    depends_on:
+      - auth-service
+      - user-service
+      - document-service
+
+volumes:
+  db_data:
