@@ -1,10 +1,12 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+// src/models/User.js
+const users = [];
 
-const User = sequelize.define('User', {
-  name: { type: DataTypes.STRING, allowNull: false },
-  email: { type: DataTypes.STRING, unique: true, allowNull: false },
-  password: { type: DataTypes.STRING, allowNull: false }
-});
-
-module.exports = User;
+module.exports = {
+  findByEmail: (email) => users.find((u) => u.email === email),
+  create: (user) => {
+    const newUser = { id: users.length + 1, ...user };
+    users.push(newUser);
+    return newUser;
+  },
+  getAll: () => users,
+};

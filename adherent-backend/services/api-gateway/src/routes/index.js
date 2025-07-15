@@ -47,8 +47,20 @@ router.put('/users/me', auth, async (req, res) => {
   }
 });
 
-// Document microservice (protected)
+// // Document microservice (protected)
+// router.get('/documents', auth, async (req, res) => {
+//   try {
+//     const response = await axios.get(`${process.env.DOCUMENT_SERVICE_URL}/api/documents`, {
+//       headers: { Authorization: req.headers['authorization'] }
+//     });
+//     res.json(response.data);
+//   } catch (err) {
+//     res.status(err.response?.status || 500).json(err.response?.data || { message: 'Document error' });
+//   }
+// });
+
 router.get('/documents', auth, async (req, res) => {
+  console.log("Authorization header reçu en gateway:", req.headers['authorization']);
   try {
     const response = await axios.get(`${process.env.DOCUMENT_SERVICE_URL}/api/documents`, {
       headers: { Authorization: req.headers['authorization'] }
@@ -58,5 +70,6 @@ router.get('/documents', auth, async (req, res) => {
     res.status(err.response?.status || 500).json(err.response?.data || { message: 'Document error' });
   }
 });
+
 
 module.exports = router;
